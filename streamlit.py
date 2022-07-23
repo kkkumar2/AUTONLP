@@ -58,14 +58,22 @@ elif app_mode == "EDA":
             df = pd.read_excel(path)
             cols = df.columns
             input_column = st.multiselect("Select Input column",cols)
-            output_column = st.multiselect("Select output column",cols)
             language = st.multiselect("Select Language",config.LANGUAGE)
             chart = st.multiselect("Select EDA Graph",config.CHART_AVAIL)
-            # if input_column is not None & output_column is not None & chart is not None:
+            if len(chart):
+                if chart[0] == "similarity-graph":
+                    category_column = st.multiselect("Select any one category column",cols)
+            # else:
+            #     category_column = [None]
             fetch = st.button("Create chart")
-            if len(input_column) > 0 and len(output_column) > 0 and len(chart) > 0:
+            if len(input_column) > 0 and len(language) > 0 and len(chart) > 0:
                 if fetch:
-                    fig = eda.charts(df,input_column[0],output_column[0],chart[0],language[0])
+                    try:
+                        if len(category_column) == 0:
+                            category_column = [None]
+                    except Exception as e:
+                        category_column = [None]
+                    fig = eda.charts(df,input_column[0],category_column[0],chart[0],language[0])
                     if fig:
                         st.plotly_chart(fig, use_container_width=True)
         else:

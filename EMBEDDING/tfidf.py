@@ -20,4 +20,8 @@ def tfidf_Vec_eda(data):
 
     tfidf_vectorizer = TfidfVectorizer(use_idf=True,max_df=0.5)
     vectors = tfidf_vectorizer.fit_transform(data)
-    return vectors.toarray() 
+    vectors = vectors.toarray()
+    vec_list = []
+    for ele in vectors:
+        vec_list.append(ele)
+    return vec_list

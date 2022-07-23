@@ -8,17 +8,31 @@ def pie_chart(text,numbers):
 
     return fig
 
-def charts(data,input_column,output_column,chart,language):
-    labels = ['Oxygen','Hydrogen','Carbon_Dioxide','Nitrogen']  ## for testing purpose
-    values = [4500, 2500, 1053, 500] ## for testing purpose
+def bar_chart(text,numbers):
+    import plotly.graph_objects as go
+
+    fig = go.Figure(go.Bar(
+            x=numbers,
+            y=text,
+            orientation='h'))
+    fig.update_layout(title_text="Word-frequency graph",title_x=0.5,template="seaborn")
+    
+    return fig
+
+def charts(data,input_column,category_column,chart,language):
+
     if chart == "similarity-graph":
-        text, numbers = fetch_labels_values(data,input_column,output_column,language)
+        text, numbers = fetch_labels_values(data,input_column,category_column,language)
         fig = pie_chart(text, numbers)
         return fig
-    else: 
+    elif chart == "word-frequency":
+        texts,numbers = fetch_word_frequency(data[input_column].values)
+        fig = bar_chart(texts, numbers) 
+        return fig
+    elif chart == "stopwords": 
         pass
 
-def fetch_labels_values(data,input_column,output_column,language):
+def fetch_labels_values(data,input_column,category_column,language):
 
     ##imports
     from CLEANING.basic_cleaning import finalpreprocess
@@ -29,12 +43,32 @@ def fetch_labels_values(data,input_column,output_column,language):
     cleaned_column = f"{input_column}_cleaned"
     vector_column = f"{cleaned_column}_vectors"
     data[cleaned_column] = data[input_column].progress_apply(lambda x: finalpreprocess(x,language))
-    
-    tfidf_vectors = tfidf_Vec_eda(data[cleaned_column])
-    inter_dict = similarity_graph(tfidf_vectors)
-    values,labels = get_similarity_Score(inter_dict)
+    data[vector_column] = tfidf_Vec_eda(data[cleaned_column])
 
-    return labels,values
+    if category_column:
+        cat = data[category_column].value_counts().index.to_list()
+        cat_str = data[category_column].value_counts().index.to_list()
+        for i in range(len(cat)):
+            cat[i] = data[data['Service'] == cat[i]]
+        text = []; numbers = []
+        for i in range(len(cat)):
+            cat[i] = cat[i].reset_index(drop=True)
+            if len(cat[i]) > 10:
+                inter_dict = similarity_graph(cat[i][vector_column])
+                values,labels = get_similarity_Score(inter_dict,cat_str[i])
+                text.extend(labels)
+                numbers.extend(values)
+            else:
+                continue
+        return text,numbers
+        
+    else:
+        # tfidf_vectors = tfidf_Vec_eda(data[cleaned_column])
+        # inter_dict = similarity_graph(tfidf_vectors)
+        inter_dict = similarity_graph(data[vector_column])
+        values,labels = get_similarity_Score(inter_dict)
+
+        return labels,values
 
 
 def cosine_similarity(v1, v2):
@@ -76,7 +110,7 @@ def similarity_graph(vectors):
     return inter_dict
 
 
-def get_similarity_Score(inter_dict):
+def get_similarity_Score(inter_dict,cat=""):
 
     count = 0
     for i in inter_dict.values():
@@ -84,5 +118,20 @@ def get_similarity_Score(inter_dict):
 
     similarity_score = (count/len(inter_dict))*100
     values = [similarity_score,100-similarity_score]
-    labels = ["Similar","Non Similar"]
+    labels = [f"{cat}_Similar",f"{cat}_Non Similar"]
     return values,labels
+
+
+def fetch_word_frequency(content):
+    from collections import Counter
+    cnt = Counter()
+    for text in content:
+        for ele1 in text.split(' '):
+            if len(ele1) > 3:
+                cnt[ele1] += 1
+    texts = []
+    numbers = []
+    for ele in cnt.most_common(50):
+        texts.append(ele[0])
+        numbers.append(ele[1])
+    return texts,numbers
