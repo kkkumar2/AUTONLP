@@ -19,31 +19,20 @@ def bar_chart(text,numbers):
     
     return fig
 
-def charts(data,input_column,category_column,chart,language):
-
-    if chart == "similarity-graph":
-        text, numbers = fetch_labels_values(data,input_column,category_column,language)
-        fig = pie_chart(text, numbers)
-        return fig
-    elif chart == "word-frequency":
-        texts,numbers = fetch_word_frequency(data[input_column].values)
-        fig = bar_chart(texts, numbers) 
-        return fig
-    elif chart == "stopwords": 
-        pass
-
 def fetch_labels_values(data,input_column,category_column,language):
 
     ##imports
     from CLEANING.basic_cleaning import finalpreprocess
-    from EMBEDDING.tfidf import tfidf_Vec_eda,tfidf_Vec_train
+    from EMBEDDING.SENTENCE.tfidf import tfidf_Vec_similarity,tfidf_Vec_train
+    from EMBEDDING.SENTENCE.bert import bert_similarity
     from tqdm import tqdm
     tqdm.pandas()
 
     cleaned_column = f"{input_column}_cleaned"
     vector_column = f"{cleaned_column}_vectors"
     data[cleaned_column] = data[input_column].progress_apply(lambda x: finalpreprocess(x,language))
-    data[vector_column] = tfidf_Vec_eda(data[cleaned_column])
+    # data[vector_column] = tfidf_Vec_similarity(data[cleaned_column])
+    data[vector_column] = bert_similarity(data[cleaned_column].to_list())
 
     if category_column:
         cat = data[category_column].value_counts().index.to_list()
@@ -135,3 +124,54 @@ def fetch_word_frequency(content):
         texts.append(ele[0])
         numbers.append(ele[1])
     return texts,numbers
+
+
+def generate_wordcloud(text,title = None): 
+
+    import matplotlib.pyplot as plt
+    from wordcloud import WordCloud,STOPWORDS
+    from nltk.corpus import stopwords
+    stop_word = set(STOPWORDS)
+    
+    #Creating wordcloud object and getting list of frequent words from text
+    wordcloud = WordCloud(background_color='black',
+                          max_words=len(text),
+                          max_font_size=40, 
+                          scale=3,
+                          stopwords = stop_word,).generate(text)
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.imshow(wordcloud, interpolation = 'bilinear')
+    plt.axis('off')
+    return fig
+
+def plot_ngrams(text, n=2, topk=50,language="english"):
+
+    print("ngrams")
+    import matplotlib.pyplot as plt
+    from nltk.util import ngrams
+    from collections import Counter
+    from nltk.corpus import stopwords
+    from nltk.tokenize import word_tokenize
+    stop_words = set(stopwords.words(language))
+  
+    word_tokens = word_tokenize(text)
+    tokens = [w for w in word_tokens if not w.lower() in stop_words]
+    # get the ngrams 
+    ngram_phrases = ngrams(tokens, n)
+    
+    # Get the most common ones 
+    most_common = Counter(ngram_phrases).most_common(topk)
+    
+    # Make word and count lists 
+    words, counts = [], []
+    for phrase, count in most_common:
+        word = ' '.join(phrase)
+        words.append(word)
+        counts.append(count)
+    
+    fig, ax = plt.subplots(figsize = (12, 8))
+    ax.bar(words,counts)
+    plt.xlabel("n-grams found in the text")
+    plt.ylabel("Ngram frequencies")
+    plt.xticks(rotation=90)
+    return fig

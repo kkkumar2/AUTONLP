@@ -1,7 +1,7 @@
 import streamlit as st
 import os
 import pandas as pd
-from EDA import eda
+from MAIN import run
 import config
 
 def save_uploaded_file(uploaded_file):
@@ -73,8 +73,11 @@ elif app_mode == "EDA":
                             category_column = [None]
                     except Exception as e:
                         category_column = [None]
-                    fig = eda.charts(df,input_column[0],category_column[0],chart[0],language[0])
+                    fig = run.charts(df,input_column[0],category_column[0],chart[0],language[0])
                     if fig:
-                        st.plotly_chart(fig, use_container_width=True)
+                        if chart[0] in ['word-cloud','word-cloud','bi-gram','tri-gram','four-gram']:
+                            st.pyplot(fig)
+                        else:
+                            st.plotly_chart(fig, use_container_width=True)
         else:
             st.error("File is improper")

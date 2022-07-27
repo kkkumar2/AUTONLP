@@ -13,7 +13,7 @@ def tfidf_Vec_train(data):
     
 
     
-def tfidf_Vec_eda(data):
+def tfidf_Vec_similarity(data):
 
     ##imports
     from sklearn.feature_extraction.text import TfidfVectorizer

@@ -6,3 +6,8 @@ plotly
 nltk
 scikit-learn
 openpyxl
+wordcloud
+matplotlib
+#glove_python
+gensim
+sentence-transformers
