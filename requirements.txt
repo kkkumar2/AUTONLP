@@ -11,3 +11,6 @@ matplotlib
 #glove_python
 gensim
 sentence-transformers
+
+
+-e .
