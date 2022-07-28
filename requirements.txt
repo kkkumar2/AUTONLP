@@ -11,6 +11,7 @@ matplotlib
 #glove_python
 gensim
 sentence-transformers
-
-
+beautifulsoup4
+contractions
+lightgbm
 -e .
