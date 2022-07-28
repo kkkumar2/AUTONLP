@@ -11,6 +11,7 @@ matplotlib
 #glove_python
 gensim
 sentence-transformers
-
+tensorflow
+tensorflow_addons
 
 -e .

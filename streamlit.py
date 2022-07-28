@@ -37,13 +37,27 @@ elif app_mode == "Upload":
             cols = df.columns
             input_column = st.multiselect("Select Input column",cols)
             output_column = st.multiselect("Select output column",cols)
-            usecase = st.selectbox("Select output column",config.USECASES)
+            if len(input_column) > 0 and len(output_column) > 0:
+                usecase = st.selectbox("Select Usecase",config.USECASES)
+                if usecase == "classification":
+                    classification_model = st.selectbox("Select CLASSIFICATION MODELS",config.CLASSIFICATION_MODELS)
+                    word_embedding = st.selectbox("Select WORD EMDEDDING ",config.WORD_EMDEDDING)
+                    train = st.button("Start training")
+                    if train:
+                        from MAIN.run import classification
+
+                        out = classification(classification_model,word_embedding,train)
+                if usecase == "similarity":
+                    pass
+                if usecase == "NER":
+                    pass
+
     else:
         st.error("File is improper")
 
 
-elif app_mode == "Train":
-    pass
+# elif app_mode == "Train":
+#     pass
 
 elif app_mode == "Test":
     pass
