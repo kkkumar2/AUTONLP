@@ -26,3 +26,7 @@ def charts(data,input_column,category_column,chart,language):
     elif chart == "word-cloud":
         from MAIN.EDA.eda import generate_wordcloud
         return generate_wordcloud(" ".join(data[input_column].values))
+
+
+def classification(classification_model,word_embedding,train):
+    pass
