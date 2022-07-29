@@ -35,11 +35,14 @@ elif app_mode == "Upload":
             df = pd.read_csv(path)
             print(df.columns)
             cols = df.columns
-            features = st.multiselect("Select Input column",cols)
-            labels = st.multiselect("Select output column",cols)
-            if len(features) > 0 and len(labels) > 0:
-                usecase = st.selectbox("Select Usecase",config.USECASES)
-                if usecase == "classification":
+            # features = st.multiselect("Select Input column",cols)
+            # labels = st.multiselect("Select output column",cols)
+            # if len(features) > 0 and len(labels) > 0:
+            usecase = st.selectbox("Select Usecase",config.USECASES)
+            if usecase == "classification":
+                features = st.multiselect("Select Input column",cols)
+                labels = st.multiselect("Select output column",cols)
+                if len(features) > 0 and len(labels) > 0:
                     classification_model = st.selectbox("Select CLASSIFICATION MODELS",config.CLASSIFICATION_MODELS)
                     word_embedding = st.selectbox("Select WORD EMDEDDING ",config.WORD_EMDEDDING)
                     train = st.button("Start training")
@@ -47,13 +50,24 @@ elif app_mode == "Upload":
                         from MAIN.run import classification
 
                         out = classification(classification_model,word_embedding,df[features],df[labels])
-                if usecase == "similarity":
-                    pass
-                if usecase == "NER":
-                    pass
+            if usecase == "similarity":
+                pass
+            if usecase == "NER":
+                sentence = st.selectbox("Select sentence column",cols)
+                word = st.selectbox("Select text column",cols)
+                pos = st.selectbox("Select pos column",cols)
+                label = st.selectbox("Select label column",cols)
+                if sentence is not None and word is not None and pos is not None and label is not None:
+                    ner_model = st.selectbox("Select NER model",config.NER_MODELS)
+                    if ner_model:
+                        train = st.button("Start training")
+                        if train:
+                            from MAIN.run import ner
 
-    else:
-        st.error("File is improper")
+                            out = ner(df,sentence,word,pos,label,ner_model)
+                            st.succes(out)
+    # else:
+    #     st.error("File is improper")
 
 
 # elif app_mode == "Train":

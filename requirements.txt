@@ -16,5 +16,7 @@ contractions
 lightgbm
 tensorflow
 tensorflow_addons
+simpletransformers
+
 
 -e .

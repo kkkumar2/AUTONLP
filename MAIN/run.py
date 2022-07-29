@@ -30,3 +30,13 @@ def charts(data,input_column,category_column,chart,language):
 
 def classification(classification_model,word_embedding,feature,labels):
     pass
+
+def ner(df,sentence,word,pos,label,ner_model):
+    if ner_model == "BILSTM":
+        from MAIN.MODELS.NER import bilstm
+        out = bilstm.preprocess(df,sentence,word,pos,label)
+        
+    else:
+        pass
+
+    return "success"
