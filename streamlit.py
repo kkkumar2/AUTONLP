@@ -35,9 +35,9 @@ elif app_mode == "Upload":
             df = pd.read_csv(path)
             print(df.columns)
             cols = df.columns
-            input_column = st.multiselect("Select Input column",cols)
-            output_column = st.multiselect("Select output column",cols)
-            if len(input_column) > 0 and len(output_column) > 0:
+            features = st.multiselect("Select Input column",cols)
+            labels = st.multiselect("Select output column",cols)
+            if len(features) > 0 and len(labels) > 0:
                 usecase = st.selectbox("Select Usecase",config.USECASES)
                 if usecase == "classification":
                     classification_model = st.selectbox("Select CLASSIFICATION MODELS",config.CLASSIFICATION_MODELS)
@@ -46,7 +46,7 @@ elif app_mode == "Upload":
                     if train:
                         from MAIN.run import classification
 
-                        out = classification(classification_model,word_embedding,train)
+                        out = classification(classification_model,word_embedding,df[features],df[labels])
                 if usecase == "similarity":
                     pass
                 if usecase == "NER":

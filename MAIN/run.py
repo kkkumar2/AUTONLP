@@ -28,5 +28,5 @@ def charts(data,input_column,category_column,chart,language):
         return generate_wordcloud(" ".join(data[input_column].values))
 
 
-def classification(classification_model,word_embedding,train):
+def classification(classification_model,word_embedding,feature,labels):
     pass
