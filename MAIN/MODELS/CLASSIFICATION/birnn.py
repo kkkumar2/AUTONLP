@@ -1,4 +1,4 @@
-from MAIN.MODELS.utils import load_data_tf
+from MAIN.MODELS.CLASSIFICATION.utils import load_data_tf
 import tensorflow as tf
 
 # value = {"Train":train,"Test":test,"encoder": encoder,"output_dim":len(unique_labels_name),"embadding_dim":Config.Embadding_Dim}

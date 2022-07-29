@@ -1,4 +1,4 @@
-from MAIN.MODELS.utils import load_data_mc
+from MAIN.MODELS.CLASSIFICATION.utils import load_data_mc
 
 import lightgbm as lgbm   
 from sklearn.svm import SVC
