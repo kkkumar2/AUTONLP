@@ -8,10 +8,21 @@
             "name": "Python: Current File",
             "type": "python",
             "request": "launch",
-            "program": "C:\\Users\\kmoha\\anaconda3\\envs\\autonlp_1\\Scripts\\streamlit.exe",
+            "program": "${file}",
             "console": "integratedTerminal",
-            "justMyCode": true,
-            "args": ["run","streamlit.py"]
-        }
+            "justMyCode": true
+        },
+        // {
+        //     "name": "Python: Current File",
+        //     "type": "python",
+        //     "request": "launch",
+        //     "program": "C:\\Users\\kmoha\\anaconda3\\envs\\autonlp_1\\Scripts\\streamlit.exe",
+        //     "console": "integratedTerminal",
+        //     "justMyCode": true,
+        //     "args": [
+        //         "run",
+        //         "streamlit.py"
+        //     ]
+        // }
     ]
 }

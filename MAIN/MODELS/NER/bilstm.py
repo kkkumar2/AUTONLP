@@ -50,7 +50,7 @@ def preprocess(data,sentence,word,pos,label):
     word2idx["UNK"] = 1
     word2idx["PAD"] = 0
     idx2word = {i: w for w, i in word2idx.items()}
-    tag2idx = {t: i + 1 for i, t in enumerate(tags)}
+    tag2idx = {t: i + 1 for i, t in enumerate(tags)}    
     tag2idx["PAD"] = 0
     idx2tag = {i: w for w, i in tag2idx.items()}
 
@@ -90,6 +90,8 @@ def preprocess(data,sentence,word,pos,label):
     print("Building Bilstm model")
     model = BILSTM_MODEL(max_len,n_words,max_len_char,n_chars,n_tags)
 
+    print(X_word_tr)
+
     print("Training started")
     history = model.fit([X_word_tr,
                      np.array(X_char_tr).reshape((len(X_char_tr), max_len, max_len_char))],
@@ -101,3 +103,7 @@ def preprocess(data,sentence,word,pos,label):
     print(f"Maximum validation accuracy is {hist['val_acc'].max()}")
 
     return hist['val_acc'].max()
+
+
+def predict():
+    pass

@@ -17,6 +17,6 @@ lightgbm
 tensorflow
 tensorflow_addons
 simpletransformers
-
+pytextrank
 
 -e .

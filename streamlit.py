@@ -74,7 +74,20 @@ elif app_mode == "Upload":
 #     pass
 
 elif app_mode == "Test":
-    pass
+    usecase = st.selectbox("Select Usecase",config.USECASES)
+    if usecase == "NER":
+        uploaded_file = st.file_uploader("Upload a file")
+        if uploaded_file is not None:
+            status,path = save_uploaded_file(uploaded_file)
+            if status:
+                ner_model = st.selectbox("Select NER model for prediction",config.NER_MODELS)
+                if ner_model:
+                    train = st.button("Start training")
+                    if train:
+                        from MAIN.PREDICT import predict
+
+                        out = predict.start_prediction(path,usecase,ner_model)
+                        st.success(f"{ner_model} model trained with accuracy {out}")
 
 elif app_mode == "EDA":
     import plotly.graph_objects as go
