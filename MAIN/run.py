@@ -35,7 +35,7 @@ def ner(df,sentence,word,pos,label,ner_model):
     if ner_model == "BILSTM":
         from MAIN.MODELS.NER import bilstm
         out = bilstm.preprocess(df,sentence,word,pos,label)
-        
+        return out
     else:
         pass
 

@@ -65,7 +65,7 @@ elif app_mode == "Upload":
                             from MAIN.run import ner
 
                             out = ner(df,sentence,word,pos,label,ner_model)
-                            st.succes(out)
+                            st.success(f"{ner_model} model trained with accuracy {out}")
     # else:
     #     st.error("File is improper")
 

@@ -1,12 +1,9 @@
 def BILSTM_MODEL(max_len,n_words,max_len_char,n_chars,n_tags):
-    # import tensorflow
-    #from tensorflow.keras.models import Model, Input
-    from keras.models import Model
-    from tensorflow.python.keras.models import Input
-    from keras.layers import LSTM, Embedding, Dense, TimeDistributed
-    from keras.layers import Bidirectional, concatenate, SpatialDropout1D
+    from keras.models import Model, Input
+    from keras.layers import LSTM, Embedding, Dense, TimeDistributed, Dropout, Conv1D
+    from keras.layers import Bidirectional, concatenate, SpatialDropout1D, GlobalMaxPooling1D
 
-    # input and embedding for words
+        # input and embedding for words
     word_in = Input(shape=(max_len,))
     emb_word = Embedding(input_dim=n_words + 2, output_dim=20,
                         input_length=max_len, mask_zero=True)(word_in)
@@ -24,11 +21,11 @@ def BILSTM_MODEL(max_len,n_words,max_len_char,n_chars,n_tags):
     x = SpatialDropout1D(0.3)(x)
     main_lstm = Bidirectional(LSTM(units=50, return_sequences=True,
                                 recurrent_dropout=0.6))(x)
-    out = TimeDistributed(Dense(n_tags + 1, activation="sigmoid"))(main_lstm)
+    out = TimeDistributed(Dense(n_tags + 1, activation="softmax"))(main_lstm)
 
-    model = Model([word_in, char_in], out)
+    inputs=[word_in,char_in]
+    model = Model(inputs, out)
     model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["acc"])
-    # model.summary()
     return model
 
 def preprocess(data,sentence,word,pos,label):
@@ -57,8 +54,9 @@ def preprocess(data,sentence,word,pos,label):
     tag2idx["PAD"] = 0
     idx2tag = {i: w for w, i in tag2idx.items()}
 
-    max_len = [len(s) for s in sentence]
-    max_len = max(max_len)
+    # max_len = [len(s) for s in sentence]
+    # max_len = max(max_len)
+    max_len = 75
     X_word = [[word2idx[w[0]] for w in s] for s in sentences]
     X_word = pad_sequences(maxlen=max_len, sequences=X_word, value=word2idx["PAD"], padding='post', truncating='post')
     
@@ -89,8 +87,10 @@ def preprocess(data,sentence,word,pos,label):
     X_word_tr, X_word_te, y_tr, y_te = train_test_split(X_word, y, test_size=0.1, random_state=2018)
     X_char_tr, X_char_te, _, _ = train_test_split(X_char, y, test_size=0.1, random_state=2018)
 
+    print("Building Bilstm model")
     model = BILSTM_MODEL(max_len,n_words,max_len_char,n_chars,n_tags)
 
+    print("Training started")
     history = model.fit([X_word_tr,
                      np.array(X_char_tr).reshape((len(X_char_tr), max_len, max_len_char))],
                     np.array(y_tr).reshape(len(y_tr), max_len, 1),
@@ -98,6 +98,6 @@ def preprocess(data,sentence,word,pos,label):
 
     hist = pd.DataFrame(history.history)
 
-    print(hist.columns)
+    print(f"Maximum validation accuracy is {hist['val_acc'].max()}")
 
-    return hist
+    return hist['val_acc'].max()
