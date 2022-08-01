@@ -13,15 +13,17 @@ def document_vector(model, doc):
 
 def word2vec_train(input_data, language):
     input_data=input_data.iloc[:10]
+    columns_list = list(input_data.columns)
     print("Inside Word2Vec")
     from MAIN.CLEANING.basic_cleaning import finalpreprocess
     from tqdm import tqdm
     tqdm.pandas()
-    # cleaned_column = f"{"review"}_cleaned"
-    cleaned_column = "review_cleaned"
-    # vector_column = f"{cleaned_column}_vectors"
+    
     print("Cleaning Started")
-    input_data[cleaned_column] = input_data["review"].progress_apply(lambda x: finalpreprocess(x,language))
+    for col in columns_list:
+        cleaned_column = f"{col}_cleaned"
+        input_data[cleaned_column] = input_data[col].progress_apply(lambda x: finalpreprocess(x,language))
+    print(input_data.columns)
     print("Cleaning Completed")
     X = []
     story = []
