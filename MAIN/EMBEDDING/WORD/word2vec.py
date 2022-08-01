@@ -1,24 +1,4 @@
 
-# from calendar import month_name, monthrange
-
-
-# def word2vec_train(data,mode='cbow'):
-    
-#     import gensim
-#     from gensim.models import Word2Vec
-#     import nltk
-
-#     tokens = [nltk.word_tokenize(i) for i in data]  
-
-#     if mode == 'cbow':
-#         # Create CBOW model
-#         model1 = Word2Vec(tokens, min_count = 3,
-#                               vector_size = 100, window = 5)
-#     else:
-#         # Create Skip Gram model
-#         model2 = Word2Vec(tokens, min_count = 3, vector_size = 100,
-#                                              window = 5, sg = 1)
-
 import gensim
 from nltk import sent_tokenize
 from gensim.utils import simple_preprocess
@@ -31,26 +11,68 @@ def document_vector(model, doc):
     doc = [word for word in doc.split() if word in model.wv.index_to_key]
     return np.mean(model.wv[doc], axis=0)
 
-
-def word2vec_train(input_data=df['review']):
+def word2vec_train(input_data, language):
+    input_data=input_data.iloc[:10]
+    print("Inside Word2Vec")
+    from MAIN.CLEANING.basic_cleaning import finalpreprocess
+    from tqdm import tqdm
+    tqdm.pandas()
+    # cleaned_column = f"{"review"}_cleaned"
+    cleaned_column = "review_cleaned"
+    # vector_column = f"{cleaned_column}_vectors"
+    print("Cleaning Started")
+    input_data[cleaned_column] = input_data["review"].progress_apply(lambda x: finalpreprocess(x,language))
+    print("Cleaning Completed")
     X = []
     story = []
-    
     #convert sentences to word tokens 
-    for doc in input_data:
+    for doc in input_data[cleaned_column]:
         story.append(simple_preprocess(doc))
     
     # model training
     model = gensim.models.Word2Vec(window=9, min_count=2)
     model.build_vocab(story)
+    print("word2vec model training started")
     model.train(story, total_examples=model.corpus_count, epochs=100)
+    print("word2vec model training completed")
     
+    print(len(model.wv.index_to_key))
     #convert all the column values into 100 dimension vector
-    for doc in tqdm(input_data.values):
+    print("Convert all the reviews in vector form")
+    for doc in tqdm(input_data[cleaned_column].values):
         X.append(document_vector(model, doc))
-    X = np.array(X)
+    # X = np.array(X)
     return X
 
-X = word2vec_train(input_data=df['review'])
+# def word2vec_train(input_data, input_column, language):
+#     print("Inside Word2Vec")
+#     from CLEANING.basic_cleaning import finalpreprocess
+#     from tqdm import tqdm
+#     tqdm.pandas()
+#     cleaned_column = f"{input_column}_cleaned"
+#     # vector_column = f"{cleaned_column}_vectors"
+#     print("Cleaning Started")
+#     input_data[cleaned_column] = input_data[input_column].progress_apply(lambda x: finalpreprocess(x,language))
+#     print("Cleaning Completed")
+#     X = []
+#     story = []
+#     #convert sentences to word tokens 
+#     for doc in input_data[cleaned_column]:
+#         story.append(simple_preprocess(doc))
+    
+#     # model training
+#     model = gensim.models.Word2Vec(window=9, min_count=2)
+#     model.build_vocab(story)
+#     print("word2vec model training started")
+#     model.train(story, total_examples=model.corpus_count, epochs=100)
+#     print("word2vec model training completed")
+    
+#     print(len(model.wv.index_to_key))
+#     #convert all the column values into 100 dimension vector
+#     print("Convert all the reviews in vector form")
+#     for doc in tqdm(input_data[cleaned_column].values):
+#         X.append(document_vector(model, doc))
+#     # X = np.array(X)
+#     return X
     
     
