@@ -24,7 +24,7 @@ def word2vec_train(input_data, language):
     X = []
     story = []
     input_data_new = pd.DataFrame()
-    input_data=input_data.iloc[:10]
+    # input_data=input_data.iloc[:10]
     columns_list = list(input_data.columns)
 
     print("Cleaning Started")

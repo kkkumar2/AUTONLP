@@ -41,6 +41,12 @@ def classification(classification_model,word_embedding,df,labels):
         # model, X= word2vec_pretrained_model(df, "english")
         print(type(model))
         print(type(X))
+    
+    elif word_embedding == "GLOVE":
+        from MAIN.EMBEDDING.WORD.glove import glove_train
+        X= glove_train(df, "english")
+    else:
+        pass
         
 # classification("abc","WORD2VEC","abc","labels")
 

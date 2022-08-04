@@ -8,7 +8,7 @@ def glove_train(input_data, language):
     from MAIN.CLEANING.basic_cleaning import finalpreprocess
 
     emmbed_dict = {}
-    with open('./glove.6B.50d.txt','r',encoding="utf8") as f:
+    with open('D:/NLP/NLP_basic//glove/glove.6B.50d.txt','r',encoding="utf8") as f:
         for line in f:
             values = line.split()
             word = values[0]
@@ -17,7 +17,7 @@ def glove_train(input_data, language):
     f.close()
 
     input_data_new = pd.DataFrame()
-    input_data=input_data.iloc[:10]
+    # input_data=input_data.iloc[:100]
     columns_list = list(input_data.columns)
 
     print("Cleaning Started")
@@ -32,7 +32,9 @@ def glove_train(input_data, language):
         for doc in tqdm(input_data_new[col].values):
             X[col]=document_vector(doc, emmbed_dict)
 
-    print("WORD2VEC word embedding completed")
+    print("GLOVE word embedding completed")
+
+    print(X)
     return X
 
 def document_vector(doc, emmbed_dict):
