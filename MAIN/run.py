@@ -32,10 +32,15 @@ def classification(classification_model,word_embedding,df,labels):
     import pandas as pd
     if word_embedding == "WORD2VEC":
         from MAIN.EMBEDDING.WORD.word2vec import word2vec_train
+        from MAIN.EMBEDDING.WORD.word2vec import word2vec_pretrained_model
         print("Inside Classificataion")
-        X= word2vec_train(df, "english")
+        # Custom training model
+        model, X= word2vec_train(df, "english")
+
+        # # Using pretrained model
+        # model, X= word2vec_pretrained_model(df, "english")
+        print(type(model))
         print(type(X))
-        print(len(X))
         
 # classification("abc","WORD2VEC","abc","labels")
 
