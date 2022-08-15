@@ -28,8 +28,28 @@ def charts(data,input_column,category_column,chart,language):
         return generate_wordcloud(" ".join(data[input_column].values))
 
 
-def classification(classification_model,word_embedding,feature,labels):
-    pass
+def classification(classification_model,word_embedding,df,labels):
+    import pandas as pd
+    if word_embedding == "WORD2VEC":
+        from MAIN.EMBEDDING.WORD.word2vec import word2vec_train
+        from MAIN.EMBEDDING.WORD.word2vec import word2vec_pretrained_model
+        print("Inside Classificataion")
+        # Custom training model
+        model, X= word2vec_train(df, "english")
+
+        # # Using pretrained model
+        # model, X= word2vec_pretrained_model(df, "english")
+        print(type(model))
+        print(type(X))
+    
+    elif word_embedding == "GLOVE":
+        from MAIN.EMBEDDING.WORD.glove import glove_train
+        X= glove_train(df, "english")
+    else:
+        pass
+        
+# classification("abc","WORD2VEC","abc","labels")
+
 
 def ner(df,sentence,word,pos,label,ner_model):
     if ner_model == "BILSTM":
