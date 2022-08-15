@@ -37,6 +37,8 @@ def ner(df,sentence,word,pos,label,ner_model):
         out = bilstm.preprocess(df,sentence,word,pos,label)
         return out
     else:
-        pass
+        from MAIN.MODELS.NER import simpletransformers
+        out = simpletransformers.train_simpletransformers(df,sentence,word,pos,label,ner_model)
+        return out
 
     return "success"
